@@ -22,7 +22,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Canada Immigration Calculator | BuildCanada",
+  title: "Canada Immigration Calculator",
   description: "Estimate your CRS score and check eligibility for Express Entry draws.",
 };
 
