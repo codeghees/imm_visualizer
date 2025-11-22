@@ -4,7 +4,8 @@
 import { useState, useEffect } from 'react';
 import { calculateCRS, UserProfile, Draw, DrawType, EducationLevel, LanguageLevel } from '@/lib/crs-calculator';
 import { recentDraws } from '@/lib/draws';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { formatDate, getDaysAgo } from '@/lib/utils';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -13,7 +14,8 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { CheckCircle2, XCircle } from 'lucide-react';
+import { CheckCircle2, XCircle, Info, ExternalLink } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 // Helper function for eligibility check
 const checkEligibility = (score: number, category: DrawType, profile: UserProfile) => {
@@ -124,9 +126,10 @@ export default function Home() {
 
         <Tabs defaultValue="calculator" className="space-y-6">
           <div className="flex justify-center">
-            <TabsList className="grid w-full max-w-md grid-cols-2 bg-white/50 p-1 rounded-xl">
+            <TabsList className="grid w-full max-w-md grid-cols-3 bg-white/50 p-1 rounded-xl">
               <TabsTrigger value="calculator" className="rounded-lg data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm">Calculator</TabsTrigger>
               <TabsTrigger value="data" className="rounded-lg data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm">Historical Data</TabsTrigger>
+              <TabsTrigger value="programs" className="rounded-lg data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm">Programs</TabsTrigger>
             </TabsList>
           </div>
 
@@ -235,7 +238,19 @@ export default function Home() {
                       </Select>
                     </div>
                     <div className="space-y-3">
-                      <Label className="text-base font-medium text-slate-900">Foreign Experience</Label>
+                      <div className="flex items-center gap-2">
+                        <Label className="text-base font-medium text-slate-900">Foreign Experience</Label>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <Info className="h-4 w-4 text-slate-400 hover:text-slate-600 transition-colors" />
+                            </TooltipTrigger>
+                            <TooltipContent className="max-w-xs text-sm bg-slate-900 text-white p-3 rounded-lg shadow-xl border-0">
+                              <p>Only counts <strong>full-time</strong> (30h/week) skilled work experience gained <strong>outside Canada</strong> in the last 10 years.</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
                       <Select value={String(profile.workExperienceForeign)} onValueChange={(v) => updateProfile('workExperienceForeign', parseInt(v))}>
                         <SelectTrigger className="h-12 text-lg bg-slate-50 border-slate-200 focus:ring-0 rounded-xl px-4">
                           <SelectValue />
@@ -253,7 +268,10 @@ export default function Home() {
                   {/* Occupation & Nomination */}
                   <div className="space-y-6">
                     <div className="space-y-3">
-                      <Label className="text-base font-medium text-slate-900">Primary Occupation</Label>
+                      <div className="flex justify-between items-center">
+                        <Label className="text-base font-medium text-slate-900">Primary Occupation</Label>
+                        <span className="text-xs text-blue-600 font-medium bg-blue-50 px-2 py-1 rounded-md">Tip: Try changing this!</span>
+                      </div>
                       <Select value={profile.occupationCategory} onValueChange={(v) => updateProfile('occupationCategory', v)}>
                         <SelectTrigger className="h-12 text-lg bg-slate-50 border-slate-200 focus:ring-0 rounded-xl px-4">
                           <SelectValue />
@@ -268,6 +286,7 @@ export default function Home() {
                           <SelectItem value="French">French Speaker (Priority)</SelectItem>
                         </SelectContent>
                       </Select>
+                      <p className="text-sm text-slate-500">Certain categories like Healthcare, STEM, and Trades often have lower cutoff scores.</p>
                     </div>
                     
                     <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-200 hover:border-slate-300 transition-colors cursor-pointer" onClick={() => updateProfile('nomination', !profile.nomination)}>
@@ -292,6 +311,25 @@ export default function Home() {
                     <h2 className="text-sm uppercase tracking-wider text-slate-500 font-semibold mb-4">Estimated CRS Score</h2>
                     <div className="text-8xl font-bold text-slate-900 tracking-tighter mb-6">{score.total}</div>
                     
+                    {/* Latest Eligible Draw Section */}
+                    {eligibleDraws.length > 0 && (
+                      <div className="mb-6 p-4 bg-green-50 border border-green-100 rounded-xl">
+                        <div className="text-xs uppercase tracking-wide text-green-700 font-semibold mb-1">Last Eligible Draw</div>
+                        <div className="flex flex-col items-center">
+                          <div className="font-bold text-lg text-slate-900">
+                            {formatDate(eligibleDraws[0].date)}
+                          </div>
+                          <div className="text-sm text-slate-500 font-medium mb-2">
+                            ({getDaysAgo(eligibleDraws[0].date)})
+                          </div>
+                          <div className="text-sm text-slate-600 flex items-center gap-2 mt-1">
+                            <Badge variant="outline" className="bg-white border-green-200 text-green-800">{eligibleDraws[0].type}</Badge>
+                            <span>CRS {eligibleDraws[0].score}</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
                     <div className="grid grid-cols-3 gap-4 pt-6 border-t border-slate-100">
                        <div className="text-center">
                          <span className="block text-2xl font-bold text-slate-900">{score.breakdown.core}</span>
@@ -333,7 +371,7 @@ export default function Home() {
                             <div key={draw.id} className="p-5 hover:bg-slate-50 transition-colors flex justify-between items-center group">
                               <div className="space-y-1">
                                 <div className="font-semibold text-slate-900">{draw.type} Draw</div>
-                                <div className="text-sm text-slate-500">{draw.date}</div>
+                                <div className="text-sm text-slate-500">{formatDate(draw.date)}</div>
                               </div>
                               <div className="text-right">
                                 <Badge variant="secondary" className="bg-slate-100 text-slate-900 hover:bg-slate-200 border-0 px-3 py-1 text-sm font-medium">
@@ -375,7 +413,7 @@ export default function Home() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-[150px]">Date</TableHead>
+                      <TableHead className="w-[200px]">Date</TableHead>
                       <TableHead>Type</TableHead>
                       <TableHead className="text-right">CRS Cutoff</TableHead>
                       <TableHead className="text-right">Invitations</TableHead>
@@ -384,7 +422,7 @@ export default function Home() {
                   <TableBody>
                     {recentDraws.map((draw) => (
                       <TableRow key={draw.id}>
-                        <TableCell className="font-medium">{draw.date}</TableCell>
+                        <TableCell className="font-medium">{formatDate(draw.date)}</TableCell>
                         <TableCell>
                           <Badge variant="secondary" className="bg-slate-100 text-slate-900 border-0">
                             {draw.type}
@@ -398,6 +436,81 @@ export default function Home() {
                 </Table>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="programs">
+            <div className="grid gap-6 grid-cols-1 md:grid-cols-3">
+              <Card className="shadow-lg border-0 rounded-2xl bg-white overflow-hidden hover:shadow-xl transition-shadow">
+                <CardHeader className="bg-slate-50 border-b border-slate-100 pb-4">
+                  <CardTitle className="text-lg font-bold text-slate-900">Canadian Experience Class (CEC)</CardTitle>
+                </CardHeader>
+                <CardContent className="p-6 space-y-4">
+                  <p className="text-sm text-slate-600 leading-relaxed">
+                    For skilled workers who have at least <strong>1 year of full-time skilled work experience in Canada</strong> in the last 3 years.
+                  </p>
+                  <div className="pt-2">
+                    <a 
+                      href="https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/eligibility/canadian-experience-class.html" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center gap-1"
+                    >
+                      Learn more <ExternalLink className="h-3 w-3" />
+                    </a>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="shadow-lg border-0 rounded-2xl bg-white overflow-hidden hover:shadow-xl transition-shadow">
+                <CardHeader className="bg-slate-50 border-b border-slate-100 pb-4">
+                  <CardTitle className="text-lg font-bold text-slate-900">Federal Skilled Worker (FSW)</CardTitle>
+                </CardHeader>
+                <CardContent className="p-6 space-y-4">
+                  <p className="text-sm text-slate-600 leading-relaxed">
+                    For skilled workers with <strong>foreign work experience</strong>. Requires at least 1 year of continuous full-time paid work experience in the same job within the last 10 years.
+                  </p>
+                  <div className="pt-2">
+                    <a 
+                      href="https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/eligibility/federal-skilled-workers.html" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center gap-1"
+                    >
+                      Learn more <ExternalLink className="h-3 w-3" />
+                    </a>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="shadow-lg border-0 rounded-2xl bg-white overflow-hidden hover:shadow-xl transition-shadow">
+                <CardHeader className="bg-slate-50 border-b border-slate-100 pb-4">
+                  <CardTitle className="text-lg font-bold text-slate-900">Category-Based Selection</CardTitle>
+                </CardHeader>
+                <CardContent className="p-6 space-y-4">
+                  <p className="text-sm text-slate-600 leading-relaxed">
+                    Special draws for candidates with specific skills, training, or language ability. Categories include:
+                  </p>
+                  <ul className="list-disc list-inside text-sm text-slate-600 space-y-1 ml-1">
+                    <li>French-language proficiency</li>
+                    <li>Healthcare occupations</li>
+                    <li>STEM occupations</li>
+                    <li>Trade occupations</li>
+                    <li>Transport occupations</li>
+                    <li>Agriculture and agri-food</li>
+                  </ul>
+                  <div className="pt-2">
+                    <a 
+                      href="https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/submit-profile/rounds-invitations/category-based-selection.html" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center gap-1"
+                    >
+                      Learn more <ExternalLink className="h-3 w-3" />
+                    </a>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
