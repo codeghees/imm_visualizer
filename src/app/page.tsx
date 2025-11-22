@@ -158,7 +158,7 @@ export default function Home() {
                   <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex gap-3 items-start">
                     <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
                     <div className="text-sm text-amber-800">
-                      <p className="font-semibold mb-1">Age & Points Warning</p>
+                      <p className="font-semibold mb-1">Age & Points Disclaimer</p>
                       <p>Points for age start decreasing after 29. Gaining more work experience or education often takes time, which increases your age and might lower your overall score.</p>
                     </div>
                   </div>
@@ -292,7 +292,6 @@ export default function Home() {
                           <SelectItem value="Trades">Trades</SelectItem>
                           <SelectItem value="Transport">Transport</SelectItem>
                           <SelectItem value="Agriculture">Agriculture</SelectItem>
-                          <SelectItem value="French">French Speaker (Priority)</SelectItem>
                         </SelectContent>
                       </Select>
                       <p className="text-sm text-slate-500">Certain categories like Healthcare, STEM, and Trades often have lower cutoff scores.</p>
