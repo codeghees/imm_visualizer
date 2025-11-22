@@ -1,13 +1,5 @@
 
-export type DrawType = 'General' | 'French' | 'STEM' | 'Healthcare' | 'Trades' | 'Transport' | 'Agriculture' | 'PNP' | 'CEC' | 'Fsw' | 'Education';
-
-export interface Draw {
-  id: string;
-  date: string;
-  type: DrawType;
-  score: number;
-  invitations: number;
-}
+import { Draw, DrawType } from './crs-calculator';
 
 export const recentDraws: Draw[] = [
   // 2025 (Actuals from CanadaVisa)

@@ -2,6 +2,16 @@
 // Simplified CRS Calculator Logic
 // Based on official CRS criteria (Single applicant logic mostly, with spouse placeholders)
 
+export type DrawType = 'General' | 'French' | 'STEM' | 'Healthcare' | 'Trades' | 'Transport' | 'Agriculture' | 'PNP' | 'CEC' | 'Fsw' | 'Education';
+
+export interface Draw {
+  id: string;
+  date: string;
+  type: DrawType;
+  score: number;
+  invitations: number;
+}
+
 export type EducationLevel = 
   | 'None' 
   | 'Secondary' 
