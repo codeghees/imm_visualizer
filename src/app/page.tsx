@@ -14,7 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { CheckCircle2, XCircle, Info, ExternalLink } from 'lucide-react';
+import { CheckCircle2, XCircle, Info, ExternalLink, TrendingUp, AlertTriangle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 // Helper function for eligibility check
@@ -142,10 +142,10 @@ export default function Home() {
                     <CardTitle className="text-2xl font-bold text-slate-900">Your Profile</CardTitle>
                     <div className="flex flex-wrap gap-2 w-full">
                        <Badge variant="secondary" className="cursor-pointer hover:bg-slate-200 px-3 py-1.5 text-sm font-medium" onClick={() => loadScenario('phd')}>
-                         UofT STEM PhD (Advanced English)
+                         UofT STEM PhD
                        </Badge>
                        <Badge variant="secondary" className="cursor-pointer hover:bg-slate-200 px-3 py-1.5 text-sm font-medium" onClick={() => loadScenario('bachelor')}>
-                         Waterloo STEM (High English)
+                         Waterloo STEM
                        </Badge>
                        <Badge variant="secondary" className="cursor-pointer hover:bg-slate-200 px-3 py-1.5 text-sm font-medium" onClick={() => loadScenario('diploma')}>
                          Conestoga Diploma + French
@@ -154,6 +154,15 @@ export default function Home() {
                   </div>
                 </CardHeader>
                 <CardContent className="p-8 space-y-8">
+                  {/* Tip Box */}
+                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex gap-3 items-start">
+                    <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                    <div className="text-sm text-amber-800">
+                      <p className="font-semibold mb-1">Age & Points Warning</p>
+                      <p>Points for age start decreasing after 29. Gaining more work experience or education often takes time, which increases your age and might lower your overall score.</p>
+                    </div>
+                  </div>
+
                   {/* Age & Education */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-3">
