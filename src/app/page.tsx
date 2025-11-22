@@ -63,7 +63,7 @@ export default function Home() {
   };
 
   // Scenario Handlers
-  const loadScenario = (type: 'phd' | 'diploma' | 'bachelor') => {
+  const loadScenario = (type: 'phd' | 'diploma' | 'bachelor' | 'mit-phd') => {
     switch(type) {
       case 'phd': // UofT STEM PhD
         setProfile({
@@ -104,6 +104,21 @@ export default function Home() {
           languageFrench: 'None',
           workExperienceCanada: 1, // Co-op + PGWP
           workExperienceForeign: 0,
+          certificateOfQualification: false,
+          nomination: false,
+          siblingInCanada: false,
+          occupationCategory: 'STEM'
+        });
+        break;
+      case 'mit-phd': // MIT PhD with 3 years US experience
+        setProfile({
+          age: 30,
+          education: 'PhD',
+          educationOrigin: 'Foreign',
+          languageEnglish: 'Advanced',
+          languageFrench: 'None',
+          workExperienceCanada: 0,
+          workExperienceForeign: 3, // 3 years US work experience
           certificateOfQualification: false,
           nomination: false,
           siblingInCanada: false,
@@ -166,6 +181,9 @@ export default function Home() {
                        </Badge>
                        <Badge variant="secondary" className="cursor-pointer hover:bg-muted/80 px-4 py-2 text-sm font-semibold border border-border/50 transition-colors" onClick={() => loadScenario('diploma')}>
                          Conestoga Diploma + French
+                       </Badge>
+                       <Badge variant="secondary" className="cursor-pointer hover:bg-muted/80 px-4 py-2 text-sm font-semibold border border-border/50 transition-colors" onClick={() => loadScenario('mit-phd')}>
+                         MIT PhD + 3yr US Exp
                        </Badge>
                     </div>
                   </div>
