@@ -5,14 +5,15 @@ import "./globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-sans",
+  variable: "--font-soehne",
   display: "swap",
 });
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
-  variable: "--font-serif",
+  variable: "--font-financier",
   display: "swap",
+  weight: ["400", "500", "700", "900"],
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -33,7 +34,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable} ${jetbrainsMono.variable}`}>
-      <body className="font-sans antialiased">
+      <body className="antialiased">
         {children}
       </body>
     </html>

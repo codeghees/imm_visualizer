@@ -72,6 +72,11 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+    
+    /* Font Variables - Using Google Fonts as fallback */
+    --font-financier: 'Playfair Display', Georgia, serif;
+    --font-soehne: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
   }
 
   .dark {
@@ -103,9 +108,18 @@
   }
   body {
     @apply bg-background text-foreground;
-    /* Use system fonts as fallback for Söhne */
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family: var(--font-soehne), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     background-color: #C7C7E0; /* The signature purple-gray background */
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-financier), Georgia, serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  
+  code, pre {
+    font-family: var(--font-mono), 'Fira Code', monospace;
   }
 }
 

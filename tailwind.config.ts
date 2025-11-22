@@ -10,6 +10,13 @@ const config: Config = {
   ],
   theme: {
   	extend: {
+  		fontFamily: {
+  			'financier': ['var(--font-financier)'],
+  			'soehne': ['var(--font-soehne)'],
+  			'mono': ['var(--font-mono)'],
+  			'sans': ['var(--font-soehne)'],
+  			'serif': ['var(--font-financier)'],
+  		},
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
