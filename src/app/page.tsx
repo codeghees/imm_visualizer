@@ -38,6 +38,7 @@ export default function Home() {
   const [profile, setProfile] = useState<UserProfile & { occupationCategory: DrawType }>({
     age: 29,
     education: 'Bachelor',
+    educationOrigin: 'Foreign',
     languageEnglish: 'Intermediate',
     languageFrench: 'None',
     workExperienceCanada: 0,
@@ -68,6 +69,7 @@ export default function Home() {
         setProfile({
           age: 28,
           education: 'PhD',
+          educationOrigin: 'Canadian',
           languageEnglish: 'Advanced',
           languageFrench: 'None',
           workExperienceCanada: 1, // Assuming TA/RA work or PostDoc
@@ -82,6 +84,7 @@ export default function Home() {
         setProfile({
           age: 24,
           education: 'TwoYear',
+          educationOrigin: 'Canadian',
           languageEnglish: 'Intermediate',
           languageFrench: 'Intermediate', // Added French as per request
           workExperienceCanada: 1, // PGWP work
@@ -96,6 +99,7 @@ export default function Home() {
         setProfile({
           age: 23,
           education: 'Bachelor',
+          educationOrigin: 'Canadian',
           languageEnglish: 'Advanced',
           languageFrench: 'None',
           workExperienceCanada: 1, // Co-op + PGWP
@@ -190,7 +194,19 @@ export default function Home() {
                       </div>
                     </div>
                     <div className="space-y-3">
-                      <Label className="text-base font-semibold text-foreground">Education</Label>
+                      <div className="flex items-center gap-2">
+                        <Label className="text-base font-semibold text-foreground">Education</Label>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <Info className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
+                            </TooltipTrigger>
+                            <TooltipContent className="max-w-xs text-sm bg-foreground text-background p-3 rounded-lg shadow-xl border-0">
+                              <p>The CRS system does <strong>not differentiate</strong> between degrees from different universities. A Bachelor's from Waterloo CS is equivalent to any other Bachelor's degree in Canada.</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
                       <Select value={profile.education} onValueChange={(v) => updateProfile('education', v)}>
                         <SelectTrigger className="h-12 text-base bg-muted/50 border-input focus:ring-2 focus:ring-ring/20 rounded-lg px-4 font-medium">
                           <SelectValue />
@@ -206,6 +222,17 @@ export default function Home() {
                           <SelectItem value="PhD">PhD</SelectItem>
                         </SelectContent>
                       </Select>
+                      {(profile.education !== 'None' && profile.education !== 'Secondary') && (
+                        <Select value={profile.educationOrigin || 'Foreign'} onValueChange={(v) => updateProfile('educationOrigin', v)}>
+                          <SelectTrigger className="h-12 text-base bg-muted/50 border-input focus:ring-2 focus:ring-ring/20 rounded-lg px-4 font-medium">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Canadian">Canadian Degree</SelectItem>
+                            <SelectItem value="Foreign">Foreign Degree</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      )}
                     </div>
                   </div>
 

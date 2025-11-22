@@ -27,6 +27,7 @@ export type LanguageLevel = 'None' | 'Beginner' | 'Intermediate' | 'Advanced';
 export interface UserProfile {
   age: number;
   education: EducationLevel;
+  educationOrigin?: 'Canadian' | 'Foreign'; // Canadian degree vs Foreign degree
   languageEnglish: LanguageLevel;
   languageFrench: LanguageLevel;
   workExperienceCanada: number; // years
@@ -70,7 +71,8 @@ const getAgePoints = (age: number): number => {
 };
 
 // Education Points (Single Applicant)
-const getEducationPoints = (level: EducationLevel): number => {
+// Core education points are the same for Canadian and foreign degrees (once foreign degrees have ECA)
+const getEducationPoints = (level: EducationLevel, origin?: 'Canadian' | 'Foreign'): number => {
   switch (level) {
     case 'PhD': return 150;
     case 'Master': return 135;
@@ -141,9 +143,34 @@ const getTransferabilityPoints = (profile: UserProfile): number => {
   else if (strongLanguage && (profile.education === 'Bachelor' || profile.education === 'TwoYear')) points += 25; // Simplified
   
   // 2. Education + Canadian Work
+  const hasCdnWork1Year = profile.workExperienceCanada >= 1;
   const strongCdnWork = profile.workExperienceCanada >= 2;
-  if (strongCdnWork && twoOrMore) points += 50;
-  else if (strongCdnWork && (profile.education === 'Bachelor' || profile.education === 'TwoYear')) points += 25; // Simplified
+  const hasPostSecondary = profile.education !== 'None' && profile.education !== 'Secondary';
+  const isCanadianEducation = profile.educationOrigin === 'Canadian';
+  
+  if (hasPostSecondary) {
+    if (isCanadianEducation) {
+      // Canadian post-secondary education + Canadian work experience
+      if (strongCdnWork && twoOrMore) {
+        points += 50;
+      } else if (strongCdnWork) {
+        points += 25; // 2+ years Canadian work + Canadian post-secondary (Bachelor/TwoYear/OneYear)
+      } else if (hasCdnWork1Year) {
+        points += 30; // 1 year Canadian work + Canadian post-secondary (includes OneYear)
+      }
+    } else {
+      // Foreign education + Canadian work experience
+      if (strongCdnWork && twoOrMore) {
+        points += 50;
+      } else if (strongCdnWork && (profile.education === 'Bachelor' || profile.education === 'TwoYear')) {
+        points += 25; // 2+ years Canadian work + foreign Bachelor/TwoYear
+      } else if (strongCdnWork && profile.education === 'OneYear') {
+        points += 13; // 2+ years Canadian work + foreign OneYear
+      } else if (hasCdnWork1Year && (profile.education === 'OneYear' || profile.education === 'TwoYear' || profile.education === 'Bachelor')) {
+        points += 13; // 1 year Canadian work + foreign post-secondary
+      }
+    }
+  }
 
   // 3. Foreign Work + Language
   const strongForeignWork = profile.workExperienceForeign >= 3;
@@ -182,7 +209,7 @@ const getAdditionalPoints = (profile: UserProfile): number => {
 export const calculateCRS = (profile: UserProfile): { total: number, breakdown: any } => {
   const coreHumanCapital = 
     getAgePoints(profile.age) + 
-    getEducationPoints(profile.education) + 
+    getEducationPoints(profile.education, profile.educationOrigin) + 
     getLanguagePointsPerSkill(profile.languageEnglish, true) + 
     getLanguagePointsPerSkill(profile.languageFrench, false) + 
     getCanadianWorkPoints(profile.workExperienceCanada);
@@ -213,7 +240,7 @@ export const calculateCRS = (profile: UserProfile): { total: number, breakdown: 
       transferability: finalTrans,
       additional: additional,
       age: getAgePoints(profile.age),
-      education: getEducationPoints(profile.education),
+      education: getEducationPoints(profile.education, profile.educationOrigin),
       language: getLanguagePointsPerSkill(profile.languageEnglish, true) + getLanguagePointsPerSkill(profile.languageFrench, false),
     }
   };
